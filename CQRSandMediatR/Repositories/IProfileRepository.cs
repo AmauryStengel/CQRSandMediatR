@@ -8,6 +8,6 @@ namespace CQRSandMediatR.Repositories
         public Task<ProfileModel> GetProfileById(int id);
         public Task<ProfileModel> AddProfile(ProfileModel profile);
         public Task<ProfileModel> UpdateProfile(ProfileModel profile);
-        public Task<ProfileModel> DeleteProfile(int id);
+        public Task<int> DeleteProfile(int id);
     }
 }
