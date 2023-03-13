@@ -1,5 +1,6 @@
 ﻿using CQRSandMediatR.Data;
 using CQRSandMediatR.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace CQRSandMediatR.Repositories
 {
@@ -25,19 +26,26 @@ namespace CQRSandMediatR.Repositories
             return await _profileData.SaveChangesAsync();
         }
 
-        public Task<ProfileModel> GetProfileById(int id)
+        public async Task<ProfileModel> GetProfileById(int id)
         {
-            throw new NotImplementedException();
+            //return mostra perfil na tela; await porque é async; _profileData está acessando o banco de dados;
+            //Profiles é a tabela; Where faz o query sobre o database;
+            //x acessa os valores do database, como "André, João ou Maria..."
+            //x.Id porque eu quero  um Id específico baseado no parâmentro id no método.
+            return await _profileData.Profiles.Where(x => x.Id == id).FirstOrDefaultAsync(); 
+            
         }
 
-        public Task<List<ProfileModel>> GetProfiles()
+        public async Task<List<ProfileModel>> GetProfiles()
         {
-            throw new NotImplementedException();
+            return await _profileData.Profiles.ToListAsync();
         }
 
-        public Task<ProfileModel> UpdateProfile(ProfileModel profile)
+        public async Task<ProfileModel> UpdateProfile(ProfileModel profile)
         {
-            throw new NotImplementedException();
+            var result = _profileData.Profiles.Update(profile);
+            await _profileData.SaveChangesAsync();
+            return result.Entity;
         }
     }
 }
