@@ -1,6 +1,10 @@
-﻿namespace CQRSandMediatR.Queries
+﻿using CQRSandMediatR.Models;
+using MediatR;
+
+namespace CQRSandMediatR.Queries
 {
-    public class GetByIdProfileQuery
+    public class GetByIdProfileQuery : IRequest<ProfileModel>
     {
+        public int Id { get; set; }
     }
 }
