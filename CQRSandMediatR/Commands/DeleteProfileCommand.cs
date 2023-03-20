@@ -1,6 +1,9 @@
-﻿namespace CQRSandMediatR.Commands
+﻿using MediatR;
+
+namespace CQRSandMediatR.Commands
 {
-    public class DeleteProfileCommand
+    public class DeleteProfileCommand : IRequest<int>
     {
+        public int Id { get; set; }
     }
 }
