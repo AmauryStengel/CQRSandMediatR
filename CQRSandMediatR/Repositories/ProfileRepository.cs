@@ -41,11 +41,10 @@ namespace CQRSandMediatR.Repositories
             return await _profileData.Profiles.ToListAsync();
         }
 
-        public async Task<ProfileModel> UpdateProfile(ProfileModel profile)
+        public async Task<int> UpdateProfile(ProfileModel profile)
         {
-            var result = _profileData.Profiles.Update(profile);
-            await _profileData.SaveChangesAsync();
-            return result.Entity;
+            _profileData.Profiles.Update(profile);
+            return await _profileData.SaveChangesAsync();
         }
     }
 }
