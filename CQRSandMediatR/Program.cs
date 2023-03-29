@@ -1,14 +1,14 @@
+using CQRSandMediatR.Data;
 using CQRSandMediatR.Repositories;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-//builder.Services.AddMediatR(Assembly.GetExecutingAssembly());
-//builder.Services.AddDbContext<DbContext>();
-//builder.Services.AddScoped<IProfileRepository, ProfileRepository>();
+builder.Services.AddMediatR(Assembly.GetExecutingAssembly());
+builder.Services.AddDbContext<DbProfileData>();
+builder.Services.AddScoped<IProfileRepository, ProfileRepository>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
