@@ -3,7 +3,7 @@ using MediatR;
 
 namespace CQRSandMediatR.Commands
 {
-    public class UpdateProfileCommand : IRequest<ProfileModel>
+    public class UpdateProfileCommand : IRequest<int>
     {
         public int Id { get; set; }
         public string FirstName { get; set; }
