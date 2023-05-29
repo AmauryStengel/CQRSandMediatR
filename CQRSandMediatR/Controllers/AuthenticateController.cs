@@ -25,6 +25,33 @@ namespace CQRSandMediatR.Controllers
             _roleManager = roleManager;
         }
 
+        [HttpPost]
+        [Route("login")] //nome de Route é sempre minúsculo
+        public async Task<IActionResult> LoginAsync([FromBody] LoginModel loginModel)
+        {
+            var user = await _userManager.FindByNameAsync(loginModel.UserName);
+            if (user is not null && await _userManager.CheckPasswordAsync(user, loginModel.Password)) { 
+                var authClaims = new List<Claim> // Claim - lista de permissões
+                {
+                    new(ClaimTypes.Name, user.UserName),
+                    new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()) //Guid = Generate Unique ID
+                };
+
+                var userRoles = await _userManager.GetRolesAsync(user);
+                foreach (var userRole in  userRoles)
+                {
+                    authClaims.Add(new(ClaimTypes.Role, userRole));
+                }
+
+                return Ok(new ResponseModel
+                {
+                    Data = GetToken(authClaims)
+                });
+            }
+
+            return Unauthorized();
+        }
+
         private TokenModel GetToken(List<Claim> authClaims)
         {
             var authSignInKey = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(_configuration["JWT:Secret"]));
@@ -38,7 +65,7 @@ namespace CQRSandMediatR.Controllers
             return new()
             {
                 Token = new JwtSecurityTokenHandler().WriteToken(token),
-                ValidTo = token.ValidTo //
+                ValidTo = token.ValidTo
             };
         }
 
