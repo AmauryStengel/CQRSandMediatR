@@ -26,6 +26,44 @@ namespace CQRSandMediatR.Controllers
         }
 
         [HttpPost]
+        [Route("register")]
+        public async Task<IActionResult> RegisterAsync([FromBody] UserModel userModel)
+        {
+            var userExists = await _userManager.FindByEmailAsync(userModel.UserName);
+            if (userExists is not null)
+            {
+                return StatusCode(StatusCodes.Status400BadRequest, new ResponseModel
+                {
+                    Success = false,
+                    Message = "User already exists!"
+                });
+            }
+            IdentityUser user = new()
+            {
+                SecurityStamp = Guid.NewGuid().ToString(),
+                UserName = userModel.UserName,
+                Email = userModel.Email,
+            };
+            var result = await _userManager.CreateAsync(user, userModel.Password);
+            if (!result.Succeeded)
+            {
+                var msg = result.Errors.Count() > 0 ? result.Errors.FirstOrDefault().Description : "Error while creating user.";
+                return StatusCode(StatusCodes.Status400BadRequest, new ResponseModel
+                {
+                    Success = false,
+                    Message = msg
+                });
+            }
+
+            var role = userModel.IsAdmin ? UserRules.Admin : UserRules.User;
+            await AddToRoleAsync(user, role);
+            return Ok(new ResponseModel
+            {
+                Message = "User created successfully!"
+            });
+        }
+
+        [HttpPost]
         [Route("login")] //nome de Route é sempre minúsculo
         public async Task<IActionResult> LoginAsync([FromBody] LoginModel loginModel)
         {
