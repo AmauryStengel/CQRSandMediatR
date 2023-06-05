@@ -2,6 +2,7 @@
 using CQRSandMediatR.Models;
 using CQRSandMediatR.Queries;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CQRSandMediatR.Controllers
@@ -19,6 +20,7 @@ namespace CQRSandMediatR.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public async Task<List<ProfileModel>> GetProfileModelsAsync()
         {
             var profileModels = await _mediator.Send(new GetListProfileQuery());
@@ -26,6 +28,7 @@ namespace CQRSandMediatR.Controllers
         }
 
         [HttpGet("profileId")]
+        [Authorize]
         public async Task<ProfileModel> GetProfileByIdAsync(int profileId)
         {
             var profileModel = await _mediator.Send(new GetByIdProfileQuery() { Id = profileId});
@@ -33,6 +36,7 @@ namespace CQRSandMediatR.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = UserRules.User)] // Model UserRules deveria ser UserRoles
         public async Task<ProfileModel> AddProfileModelAsync(ProfileModel profileModel)
         {
             var resultProfileModel = await _mediator.Send(new CreateProfileCommand(
@@ -50,6 +54,7 @@ namespace CQRSandMediatR.Controllers
         }
 
         [HttpPut]
+        [Authorize(Roles = UserRules.Admin)]
         public async Task<int> UpdateProfileModelAsync(ProfileModel profileModel)
         {
             var id = await _mediator.Send(new UpdateProfileCommand(
@@ -68,6 +73,7 @@ namespace CQRSandMediatR.Controllers
         }
 
         [HttpDelete]
+        [Authorize(Roles = UserRules.Admin)]
         public async Task<int> DeleteProfileModelAsync(int id)
         {
             return await _mediator.Send(new DeleteProfileCommand() { Id = id });
